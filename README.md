@@ -1,59 +1,43 @@
-# OBS Plugin Template
+# Sab Sound – Cisco Precision 60 PTZ Control
 
-## Introduction
+An independent native OBS Studio dock plugin for controlling a Cisco Precision 60 camera over Ethernet using DORIC.
 
-The plugin template is meant to be used as a starting point for OBS Studio plugin development. It includes:
+## Features
 
-* Boilerplate plugin source code
-* A CMake project file
-* GitHub Actions workflows and repository actions
+- Pan, tilt and diagonal movement with adjustable speed (1–5)
+- Zoom, manual focus and autofocus
+- Center/reset command, power and LED controls
+- Four locally stored camera position presets (experimental; recall accuracy may vary)
+- Connection settings and diagnostic journal
 
-## Supported Build Environments
+## Requirements
 
-| Platform  | Tool   |
-|-----------|--------|
-| Windows   | Visual Studio 17 2022 |
-| macOS     | XCode 16.0 |
-| Windows, macOS  | CMake 3.30.5 |
-| Ubuntu 24.04 | CMake 3.28.3 |
-| Ubuntu 24.04 | `ninja-build` |
-| Ubuntu 24.04 | `pkg-config`
-| Ubuntu 24.04 | `build-essential` |
+- Windows 64-bit
+- OBS Studio (tested with 32.2.2 during development; build SDK 31.1.1)
+- Cisco Precision 60 camera reachable on a trusted local network, TCP port 13496
+- A working TLS backend compatible with the Qt runtime bundled with OBS
+- A separate video capture source for the camera's HDMI output; this plugin controls the camera, not video capture
 
-## Quick Start
+## Installation
 
-An absolute bare-bones [Quick Start Guide](https://github.com/obsproject/obs-plugintemplate/wiki/Quick-Start-Guide) is available in the wiki.
+1. Close OBS Studio.
+2. Download the Windows x64 package from [Releases](https://github.com/sabinescu2006/SabSound-OBS-Cisco-Precision60-PTZ/releases).
+3. Extract the archive, preserving its directory structure, into your OBS installation directory. The plugin DLL belongs in `obs-plugins/64bit`.
+4. Start OBS and open **Docks → Sab Sound Cisco Precision 60 PTZ**.
+5. Enter your camera's local IP address in the settings tab (Setari), review the certificate trust option and connect.
 
-## Documentation
+If TLS is unavailable, inspect the journal for the Qt runtime version and available backends. Obtain a compatible TLS backend from a trusted official Qt distribution and follow its deployment requirements. For the tested OBS installation, Qt 6.11.1 x64 was used and TLS plugins were placed in `bin/64bit/tls`. Do not overwrite unrelated OBS runtime DLLs. Backend requirements may vary by installation.
 
-All documentation can be found in the [Plugin Template Wiki](https://github.com/obsproject/obs-plugintemplate/wiki).
+## Security and limitations
 
-Suggested reading to get up and running:
+The camera connection supports legacy TLS and disables peer certificate verification after explicit user confirmation. Use only on a trusted, isolated local network; do not expose the camera control port to the internet. This is an independent, experimental integration, not an official Cisco or OBS product. Compatibility with other cameras or firmware versions is not established. The interface currently uses Romanian labels.
 
-* [Getting started](https://github.com/obsproject/obs-plugintemplate/wiki/Getting-Started)
-* [Build system requirements](https://github.com/obsproject/obs-plugintemplate/wiki/Build-System-Requirements)
-* [Build system options](https://github.com/obsproject/obs-plugintemplate/wiki/CMake-Build-System-Options)
+## Build
 
-## GitHub Actions & CI
+The repository uses the OBS plugin template and GitHub Actions to build Windows x64 packages. Source formatting checks remain enabled. Version tags use the format `1.0.0` (without a v prefix) to trigger a draft release.
 
-Default GitHub Actions workflows are available for the following repository actions:
+## License and credits
 
-* `push`: Run for commits or tags pushed to `master` or `main` branches.
-* `pr-pull`: Run when a Pull Request has been pushed or synchronized.
-* `dispatch`: Run when triggered by the workflow dispatch in GitHub's user interface.
-* `build-project`: Builds the actual project and is triggered by other workflows.
-* `check-format`: Checks CMake and plugin source code formatting and is triggered by other workflows.
+GNU General Public License version 2; see [LICENSE](LICENSE). Based on the [OBS plugin template](https://github.com/obsproject/obs-plugintemplate).
 
-The workflows make use of GitHub repository actions (contained in `.github/actions`) and build scripts (contained in `.github/scripts`) which are not needed for local development, but might need to be adjusted if additional/different steps are required to build the plugin.
-
-### Retrieving build artifacts
-
-Successful builds on GitHub Actions will produce build artifacts that can be downloaded for testing. These artifacts are commonly simple archives and will not contain package installers or installation programs.
-
-### Building a Release
-
-To create a release, an appropriately named tag needs to be pushed to the `main`/`master` branch using semantic versioning (e.g., `12.3.4`, `23.4.5-beta2`). A draft release will be created on the associated repository with generated installer packages or installation programs attached as release artifacts.
-
-## Signing and Notarizing on macOS
-
-Basic concepts of codesigning and notarization on macOS are explained in the correspodning [Wiki article](https://github.com/obsproject/obs-plugintemplate/wiki/Codesigning-On-macOS) which has a specific section for the [GitHub Actions setup](https://github.com/obsproject/obs-plugintemplate/wiki/Codesigning-On-macOS#setting-up-code-signing-for-github-actions).
+Developed by Sab Sound — https://sabsound.ro
