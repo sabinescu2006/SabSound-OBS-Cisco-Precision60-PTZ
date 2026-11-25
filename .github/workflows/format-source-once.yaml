@@ -1,0 +1,30 @@
+name: Format source once
+on:
+  push:
+    paths:
+      - '.github/workflows/format-source-once.yaml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: true
+      - name: Format source with project clang-format 19
+        shell: bash
+        run: |
+          set -euo pipefail
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          brew install --quiet obsproject/tools/clang-format@19
+          /home/linuxbrew/.linuxbrew/opt/clang-format@19/bin/clang-format-19 -i src/plugin.cpp
+          git diff --check
+          if ! git diff --quiet -- src/plugin.cpp; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/plugin.cpp
+            git commit -m "Apply clang-format 19 to bilingual UI source"
+            git push origin HEAD:master
+          fi
