@@ -29,6 +29,8 @@ class Panel : public QWidget {
 	QWidget *controls;
 	QCheckBox *trust;
 	QSettings settings{"Sab Sound", "OBS Cisco PTZ"};
+	bool romanian = settings.value("language", "en").toString() == "ro";
+	QString lang(const char *ro, const char *en) const { return QString::fromUtf8(romanian ? ro : en); }
 	static QByteArray hex(const char *s) { return QByteArray::fromHex(s); }
 	void note(QString s) { log->appendPlainText(QTime::currentTime().toString("HH:mm:ss.zzz ") + s); }
 	void tx(QByteArray b)
@@ -45,7 +47,7 @@ class Panel : public QWidget {
 			if (yes)
 				w->setCurrentIndex(1);
 		}
-		status->setText(yes ? "Conectat DORIC" : "Deconectat / initializare");
+		status->setText(yes ? lang("Conectat DORIC", "DORIC connected") : lang("Deconectat / initializare", "Disconnected / initializing"));
 	}
 	void halt()
 	{
@@ -161,7 +163,7 @@ class Panel : public QWidget {
 				lastPosition = hex("010113") + fields[0] + hex("01") + fields[1] + hex("01") +
 					       fields[2] + hex("010000");
 				lastPosition.prepend(char(lastPosition.size()));
-				note("Feedback PTZ experimental disponibil");
+				note(lang("Feedback PTZ experimental disponibil", "Experimental PTZ feedback available"));
 			}
 		}
 	}
@@ -258,11 +260,11 @@ public:
 		speed->setValue(qBound(1, settings.value("speed", 1).toInt(), 5));
 		speed->setTickPosition(QSlider::TicksBelow);
 		speed->setTickInterval(1);
-		auto *sl = new QLabel(QString("Viteza PTZ: %1").arg(speed->value()));
+		auto *sl = new QLabel(lang("Viteza PTZ: %1", "PTZ speed: %1").arg(speed->value()));
 		cv->addWidget(sl);
 		cv->addWidget(speed);
 		connect(speed, &QSlider::valueChanged, this, [this, sl](int n) {
-			sl->setText(QString("Viteza PTZ: %1").arg(n));
+			sl->setText(lang("Viteza PTZ: %1", "PTZ speed: %1").arg(n));
 			settings.setValue("speed", n);
 			if (moving && phase == 3 && motionPacket.size() >= 5) {
 				motionPacket[4] = char(n);
@@ -329,13 +331,13 @@ public:
 				QTimer::singleShot(350, this, [this, key, go, i, request] {
 					if (request != presetRequest || phase != 3 || moving ||
 					    lastPosition.isEmpty()) {
-						note("SET: citirea pozitiei nu a fost confirmata");
+						note(lang("SET: citirea pozitiei nu a fost confirmata", "SET: position read was not confirmed"));
 						return;
 					}
 					settings.setValue(key, lastPosition);
 					settings.sync();
 					go->setEnabled(true);
-					note(QString("Preset %1 salvat: %2")
+					note(lang("Preset %1 salvat: %2", "Preset %1 saved: %2")
 						     .arg(i)
 						     .arg(QString(lastPosition.toHex(' ').toUpper())));
 				});
@@ -361,6 +363,11 @@ public:
 		cv = new QVBoxLayout(settingsPage);
 		cv->setContentsMargins(3, 5, 3, 3);
 		cv->setSpacing(5);
+		auto *language = new QComboBox;
+		language->addItem("English", "en");
+		language->addItem("Română", "ro");
+		language->setCurrentIndex(romanian ? 1 : 0);
+		cv->addWidget(language);
 		cv->addWidget(ip);
 		cv->addWidget(trust);
 		cv->addLayout(r);
@@ -404,11 +411,11 @@ public:
 				return;
 			auto p = QByteArray::fromHex(s.toLatin1());
 			if (p.size() < 4 || static_cast<unsigned char>(p[0]) != p.size() - 1) {
-				note("Lungime HEX invalida");
+				note(lang("Lungime HEX invalida", "Invalid HEX length"));
 				return;
 			}
-			if (QMessageBox::question(this, "HEX experimental",
-						  "Trimit o singura data? Poate modifica starea camerei.") ==
+			if (QMessageBox::question(this, lang("HEX experimental", "Experimental HEX"),
+						  lang("Trimit o singura data? Poate modifica starea camerei.", "Send once? This may change the camera state.")) ==
 			    QMessageBox::Yes) {
 				halt();
 				tx(p);
@@ -425,7 +432,7 @@ public:
 		auto *save = new QPushButton("Salveaza jurnal");
 		cv->addWidget(save);
 		connect(save, &QPushButton::clicked, this, [this] {
-			auto path = QFileDialog::getSaveFileName(this, "Jurnal", "DORIC.txt");
+			auto path = QFileDialog::getSaveFileName(this, lang("Jurnal", "Journal"), "DORIC.txt");
 			QFile f(path);
 			if (f.open(QIODevice::WriteOnly))
 				f.write(log->toPlainText().toUtf8());
@@ -439,12 +446,12 @@ public:
 		});
 		handshakeTimer.setSingleShot(true);
 		connect(&handshakeTimer, &QTimer::timeout, this, [this] {
-			note("Timeout conectare");
+			note(lang("Timeout conectare", "Connection timeout"));
 			sock.abort();
 		});
 		connect(c, &QPushButton::clicked, this, [this] {
 			if (!trust->isChecked()) {
-				note("Confirma certificatul neverificat pentru camera din LAN.");
+				note(lang("Confirma certificatul neverificat pentru camera din LAN.", "Confirm the unverified certificate for the LAN camera."));
 				return;
 			}
 			halt();
@@ -455,7 +462,7 @@ public:
 			note("Qt plugin paths: " + QCoreApplication::libraryPaths().join("; "));
 			note("TLS backends: " + QSslSocket::availableBackends().join(", "));
 			if (!QSslSocket::supportsSsl()) {
-				note("TLS indisponibil: backend Qt lipsa sau incompatibil.");
+				note(lang("TLS indisponibil: backend Qt lipsa sau incompatibil.", "TLS unavailable: Qt backend missing or incompatible."));
 				return;
 			}
 			note("TLS backend: " + QSslSocket::activeBackend());
@@ -492,7 +499,47 @@ public:
 			if (state != Qt::ApplicationActive)
 				halt();
 		});
+		auto translate = [this, tabs, sl] {
+			const QMap<QString, QString> labels{
+				{"Accept certificat (LAN)", "Trust certificate (LAN)"},
+				{"Conectare", "Connect"},
+				{"Deconectare", "Disconnect"},
+				{"Sus", "Up"},
+				{"Jos", "Down"},
+				{"Stanga", "Left"},
+				{"Dreapta", "Right"},
+				{"CENTRU", "CENTER"},
+				{"Pozitii memorate", "Saved positions"},
+				{"LED verde ON", "Green LED ON"},
+				{"LED verde OFF", "Green LED OFF"},
+				{"Trimite HEX", "Send HEX"},
+				{"Salveaza jurnal", "Save journal"},
+				{"Focus Near", "Focus Near"},
+				{"Focus Far", "Focus Far"}};
+			auto translated = [this, &labels](const QString &value) {
+				for (auto it = labels.cbegin(); it != labels.cend(); ++it)
+					if (value == it.key() || value == it.value())
+						return romanian ? it.key() : it.value();
+				return value;
+			};
+			for (auto *button : findChildren<QAbstractButton *>())
+				button->setText(translated(button->text()));
+			for (auto *label : findChildren<QLabel *>())
+				label->setText(translated(label->text()));
+			tabs->setTabText(0, lang("Setari", "Settings"));
+			tabs->setTabText(2, lang("Jurnal", "Journal"));
+			sl->setText(lang("Viteza PTZ: %1", "PTZ speed: %1").arg(speed->value()));
+			status->setText(phase == 3 ? lang("Conectat DORIC", "DORIC connected")
+						  : lang("Deconectat / initializare", "Disconnected / initializing"));
+		};
+		connect(language, &QComboBox::currentIndexChanged, this, [this, language, translate](int) {
+			romanian = language->currentData().toString() == "ro";
+			settings.setValue("language", language->currentData());
+			settings.sync();
+			translate();
+		});
 		ready(false);
+		translate();
 	}
 	~Panel()
 	{
