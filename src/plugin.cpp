@@ -47,7 +47,8 @@ class Panel : public QWidget {
 			if (yes)
 				w->setCurrentIndex(1);
 		}
-		status->setText(yes ? lang("Conectat DORIC", "DORIC connected") : lang("Deconectat / initializare", "Disconnected / initializing"));
+		status->setText(yes ? lang("Conectat DORIC", "DORIC connected")
+				    : lang("Deconectat / initializare", "Disconnected / initializing"));
 	}
 	void halt()
 	{
@@ -163,7 +164,8 @@ class Panel : public QWidget {
 				lastPosition = hex("010113") + fields[0] + hex("01") + fields[1] + hex("01") +
 					       fields[2] + hex("010000");
 				lastPosition.prepend(char(lastPosition.size()));
-				note(lang("Feedback PTZ experimental disponibil", "Experimental PTZ feedback available"));
+				note(lang("Feedback PTZ experimental disponibil",
+					  "Experimental PTZ feedback available"));
 			}
 		}
 	}
@@ -331,7 +333,8 @@ public:
 				QTimer::singleShot(350, this, [this, key, go, i, request] {
 					if (request != presetRequest || phase != 3 || moving ||
 					    lastPosition.isEmpty()) {
-						note(lang("SET: citirea pozitiei nu a fost confirmata", "SET: position read was not confirmed"));
+						note(lang("SET: citirea pozitiei nu a fost confirmata",
+							  "SET: position read was not confirmed"));
 						return;
 					}
 					settings.setValue(key, lastPosition);
@@ -415,7 +418,8 @@ public:
 				return;
 			}
 			if (QMessageBox::question(this, lang("HEX experimental", "Experimental HEX"),
-						  lang("Trimit o singura data? Poate modifica starea camerei.", "Send once? This may change the camera state.")) ==
+						  lang("Trimit o singura data? Poate modifica starea camerei.",
+						       "Send once? This may change the camera state.")) ==
 			    QMessageBox::Yes) {
 				halt();
 				tx(p);
@@ -451,7 +455,8 @@ public:
 		});
 		connect(c, &QPushButton::clicked, this, [this] {
 			if (!trust->isChecked()) {
-				note(lang("Confirma certificatul neverificat pentru camera din LAN.", "Confirm the unverified certificate for the LAN camera."));
+				note(lang("Confirma certificatul neverificat pentru camera din LAN.",
+					  "Confirm the unverified certificate for the LAN camera."));
 				return;
 			}
 			halt();
@@ -462,7 +467,8 @@ public:
 			note("Qt plugin paths: " + QCoreApplication::libraryPaths().join("; "));
 			note("TLS backends: " + QSslSocket::availableBackends().join(", "));
 			if (!QSslSocket::supportsSsl()) {
-				note(lang("TLS indisponibil: backend Qt lipsa sau incompatibil.", "TLS unavailable: Qt backend missing or incompatible."));
+				note(lang("TLS indisponibil: backend Qt lipsa sau incompatibil.",
+					  "TLS unavailable: Qt backend missing or incompatible."));
 				return;
 			}
 			note("TLS backend: " + QSslSocket::activeBackend());
@@ -500,22 +506,21 @@ public:
 				halt();
 		});
 		auto translate = [this, tabs, sl] {
-			const QMap<QString, QString> labels{
-				{"Accept certificat (LAN)", "Trust certificate (LAN)"},
-				{"Conectare", "Connect"},
-				{"Deconectare", "Disconnect"},
-				{"Sus", "Up"},
-				{"Jos", "Down"},
-				{"Stanga", "Left"},
-				{"Dreapta", "Right"},
-				{"CENTRU", "CENTER"},
-				{"Pozitii memorate", "Saved positions"},
-				{"LED verde ON", "Green LED ON"},
-				{"LED verde OFF", "Green LED OFF"},
-				{"Trimite HEX", "Send HEX"},
-				{"Salveaza jurnal", "Save journal"},
-				{"Focus Near", "Focus Near"},
-				{"Focus Far", "Focus Far"}};
+			const QMap<QString, QString> labels{{"Accept certificat (LAN)", "Trust certificate (LAN)"},
+							    {"Conectare", "Connect"},
+							    {"Deconectare", "Disconnect"},
+							    {"Sus", "Up"},
+							    {"Jos", "Down"},
+							    {"Stanga", "Left"},
+							    {"Dreapta", "Right"},
+							    {"CENTRU", "CENTER"},
+							    {"Pozitii memorate", "Saved positions"},
+							    {"LED verde ON", "Green LED ON"},
+							    {"LED verde OFF", "Green LED OFF"},
+							    {"Trimite HEX", "Send HEX"},
+							    {"Salveaza jurnal", "Save journal"},
+							    {"Focus Near", "Focus Near"},
+							    {"Focus Far", "Focus Far"}};
 			auto translated = [this, &labels](const QString &value) {
 				for (auto it = labels.cbegin(); it != labels.cend(); ++it)
 					if (value == it.key() || value == it.value())
@@ -530,7 +535,7 @@ public:
 			tabs->setTabText(2, lang("Jurnal", "Journal"));
 			sl->setText(lang("Viteza PTZ: %1", "PTZ speed: %1").arg(speed->value()));
 			status->setText(phase == 3 ? lang("Conectat DORIC", "DORIC connected")
-						  : lang("Deconectat / initializare", "Disconnected / initializing"));
+						   : lang("Deconectat / initializare", "Disconnected / initializing"));
 		};
 		connect(language, &QComboBox::currentIndexChanged, this, [this, language, translate](int) {
 			romanian = language->currentData().toString() == "ro";
