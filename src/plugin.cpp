@@ -515,6 +515,18 @@ bool obs_module_load()
 		panel = nullptr;
 		return false;
 	}
+	auto *dock = qobject_cast<QDockWidget *>(panel->parentWidget());
+	if (dock) {
+		auto compact = [dock] {
+			if (dock->isFloating())
+				dock->resize(320, 620);
+		};
+		QObject::connect(dock, &QDockWidget::topLevelChanged, panel, [dock, compact](bool floating) {
+			if (floating)
+				QTimer::singleShot(0, dock, compact);
+		});
+		QTimer::singleShot(1000, dock, compact);
+	}
 	return true;
 }
 void obs_module_unload()
