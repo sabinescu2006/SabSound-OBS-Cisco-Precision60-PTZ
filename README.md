@@ -19,6 +19,8 @@ If this free plugin is useful to you, you can support its continued development 
 
 [![Donate via Revolut](https://img.shields.io/badge/Donate-Revolut-191919?style=for-the-badge)](https://revolut.me/sabin2006)
 
+[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-003087?style=for-the-badge)](https://paypal.me/sabinsabinescu)
+
 Donations are optional and are not required to use the plugin.
 
 ## Features
