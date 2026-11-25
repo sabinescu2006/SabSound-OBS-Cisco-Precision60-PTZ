@@ -6,6 +6,9 @@ on:
       - master
       - main
       - 'release/**'
+    paths-ignore:
+      - '**/*.md'
+      - 'images/**'
     tags:
       - '*'
 permissions:
