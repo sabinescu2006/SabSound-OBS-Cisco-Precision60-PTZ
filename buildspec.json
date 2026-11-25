@@ -37,9 +37,9 @@
         }
     },
     "name": "sab-sound-cisco-ptz",
-    "displayName": "Sab Sound Cisco PTZ",
-    "version": "0.1.0",
+    "displayName": "Sab Sound Cisco Precision 60 PTZ",
+    "version": "1.0.0",
     "author": "Sab Sound",
     "website": "https://sabsound.ro",
-    "email": "me@example.com"
+    "email": ""
 }
