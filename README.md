@@ -2,6 +2,17 @@
 
 An independent native OBS Studio dock plugin for controlling a Cisco Precision 60 camera over Ethernet using DORIC.
 
+<p align="center"><img src="images/camera.jpeg" alt="Cisco Precision 60 camera" width="480"></p>
+
+<p align="center"><a href="https://github.com/sabinescu2006/SabSound-OBS-Cisco-Precision60-PTZ/releases/tag/1.0.0"><strong>Download v1.0.0 — Windows x64</strong></a></p>
+
+## Screenshots
+
+| Control | Settings | Journal |
+| :---: | :---: | :---: |
+| <img src="images/control.png" alt="PTZ control" width="260"> | <img src="images/settings.png" alt="Connection settings" width="260"> | <img src="images/journal.png" alt="Diagnostic journal" width="260"> |
+
+
 ## Features
 
 - Pan, tilt and diagonal movement with adjustable speed (1–5)
