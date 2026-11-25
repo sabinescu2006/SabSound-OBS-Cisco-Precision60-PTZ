@@ -13,6 +13,14 @@ An independent native OBS Studio dock plugin for controlling a Cisco Precision 6
 | <img src="images/control.png" alt="PTZ control" width="260"> | <img src="images/settings.png" alt="Connection settings" width="260"> | <img src="images/journal.png" alt="Diagnostic journal" width="260"> |
 
 
+## Support Sab Sound
+
+If this free plugin is useful to you, you can support its continued development with a voluntary donation.
+
+[![Donate via Revolut](https://img.shields.io/badge/Donate-Revolut-191919?style=for-the-badge)](https://revolut.me/sabin2006)
+
+Donations are optional and are not required to use the plugin.
+
 ## Features
 
 - Pan, tilt and diagonal movement with adjustable speed (1–5)
