@@ -221,8 +221,8 @@ public:
 		auto *v = new QVBoxLayout(body);
 		v->setContentsMargins(6, 6, 6, 6);
 		v->setSpacing(5);
-		v->addWidget(new QLabel("<b>Sab Sound | Cisco PTZ</b>"));
-		ip = new QLineEdit(settings.value("ip", "192.168.0.224").toString());
+		v->addWidget(new QLabel("<b>Sab Sound | Cisco Precision 60</b>"));
+		ip = new QLineEdit(settings.value("ip", "").toString());
 		trust = new QCheckBox("Accept certificat (LAN)");
 		auto *r = new QHBoxLayout;
 		auto *c = new QPushButton("Conectare"), *d = new QPushButton("Deconectare");
@@ -510,7 +510,7 @@ static Panel *panel = nullptr;
 bool obs_module_load()
 {
 	panel = new Panel;
-	if (!obs_frontend_add_dock_by_id("sabsound-cisco-ptz", "Sab Sound Cisco PTZ", panel)) {
+	if (!obs_frontend_add_dock_by_id("sabsound-cisco-ptz", "Sab Sound Cisco Precision 60 PTZ", panel)) {
 		delete panel;
 		panel = nullptr;
 		return false;
